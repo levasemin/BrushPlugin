@@ -12,7 +12,7 @@ FetchContent_Declare(
 FetchContent_GetProperties(PluginStandart)
 FetchContent_Populate(PluginStandart)
 
-include_directories(../build/_deps/pluginstandart-src)
+include_directories(build/_deps/pluginstandart-src)
 
 file(GLOB brush_SRC "src/*.cpp")
 file(GLOB brush_LIB "include/*.hpp")

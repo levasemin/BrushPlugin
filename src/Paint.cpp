@@ -8,7 +8,7 @@ ToolPaint::ToolPaint() : booba::Tool(),
     drawing_object_frame_(min_width_),
     color_()
     {
-        widget_creator_ = (booba::WidgetCreator *)booba::getWidgetCreator(booba::getGUID());
+        widget_creator_   = (booba::WidgetCreator *) booba::getWidgetCreator(this);
         
         width_scroll_bar_ = (booba::ScrollBar *) widget_creator_->createWidget(booba::WidgetCreator::Type::SCROLLBAR, 150, 30, 10, 10);
         width_editor_     = (booba::Editor *)    widget_creator_->createWidget(booba::WidgetCreator::Type::EDITOR,    50,  30, 50, 50);
@@ -171,9 +171,4 @@ std::pair<int, int> ToolPaint::getShape()
 extern "C" void *init_module()
 {
     return new ToolPaint();
-}
-
-extern "C" booba::GUID getGUID()
-{
-    return {"paintSL"};
 }
