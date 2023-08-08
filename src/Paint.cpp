@@ -95,26 +95,33 @@ void ToolPaint::apply(booba::Image* image, booba::Image *hidden_layer, const boo
     
     switch (event->type)
     {
-        case booba::EventType::MousePressed:
+        case booba::Event::MousePressed:
         {
-            clicked_ = true;
+            if (event->Oleg.mpedata.button == booba::Event::MouseButton::Left)
+            {
+                clicked_ = true;
 
-            std::pair<int, int> new_point((float)event->Oleg.mpedata.x, (float)event->Oleg.mpedata.y);
+                std::pair<int, int> new_point((float)event->Oleg.mpedata.x, (float)event->Oleg.mpedata.y);
 
-            points_.push_back(new_point);
-            paint(image);
-            points_.pop_back();
+                points_.push_back(new_point);
+                paint(image);
+                points_.pop_back();
+            }
 
             break;
         }
 
-        case booba::EventType::MouseReleased:
+        case booba::Event::MouseReleased:
         {
-            clicked_ = false;
+            if (event->Oleg.mpedata.button == booba::Event::MouseButton::Left)
+            {
+                clicked_ = false;
+            }
+            
             break;
         }
 
-        case booba::EventType::MouseMoved:
+        case booba::Event::MouseMoved:
         {
             std::pair<int, int> new_point((float)event->Oleg.motion.x, (float)event->Oleg.motion.y);
 
@@ -151,7 +158,7 @@ void ToolPaint::apply(booba::Image* image, booba::Image *hidden_layer, const boo
             break;
         }
         
-        case booba::EventType::NoEvent:
+        case booba::Event::NoEvent:
         
         default:
             break;
