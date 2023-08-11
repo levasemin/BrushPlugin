@@ -8,16 +8,16 @@ ToolPaint::ToolPaint() : booba::Tool(),
     drawing_object_frame_(min_width_),
     color_()
     {
-        widget_creator_   = (booba::WidgetCreator *) booba::getWidgetCreator(this);
+        widget_creator_   = dynamic_cast<booba::WidgetCreator *>(booba::getWidgetCreator(this));
         
-        width_scroll_bar_ = (booba::ScrollBar *) widget_creator_->createWidget(booba::WidgetCreator::Type::SCROLLBAR, 150, 30, 10, 10);
-        width_editor_     = (booba::Editor *)    widget_creator_->createWidget(booba::WidgetCreator::Type::EDITOR,    50,  30, 50, 50);
+        width_scroll_bar_ = dynamic_cast<booba::ScrollBar *>(widget_creator_->createWidget(booba::WidgetCreator::Type::SCROLLBAR, 150, 30, 10, 10));
+        width_editor_     = dynamic_cast<booba::Editor *>   (widget_creator_->createWidget(booba::WidgetCreator::Type::EDITOR,    50,  30, 50, 50));
 
         width_scroll_bar_->setMinValue(min_width_);
         width_scroll_bar_->setMaxValue(max_width_);
-        width_scroll_bar_->setCommand((booba::Command<float> *) new booba::SimpleCommand<ToolPaint, float>(this, &ToolPaint::set_width));
+        width_scroll_bar_->setCommand(dynamic_cast<booba::Command<float> *>(new booba::SimpleCommand<ToolPaint, float>(this, &ToolPaint::set_width)));
 
-        width_editor_->setCommand((booba::Command<std::string> *) new booba::SimpleCommand<ToolPaint, std::string>(this, &ToolPaint::set_width));
+        width_editor_->setCommand(dynamic_cast<booba::Command<std::string> *>(new booba::SimpleCommand<ToolPaint, std::string>(this, &ToolPaint::set_width)));
     }
 
 ToolPaint::~ToolPaint()
@@ -42,14 +42,14 @@ void ToolPaint::set_width(std::string string)
         return;
     }
     
-    float width = string.size() > 0 ? float(std::stoi(string)) : 0;
+    float width = string.size() > 0 ? static_cast<float>(std::stoi(string)) : 0;
     width = width <= max_width_ ? width : max_width_;
     
     width_scroll_bar_->setValue(width);
 
-    drawing_object_.setRadius(int(width / 2) == 0 ? min_width_ : int(width / 2));
-    drawing_object_frame_.setRadius(int(width / 2) == 0 ? min_width_ : int(width / 2));
-    drawing_object_empty_.setRadius(int(width / 2) == 0 ? min_width_ : int(width / 2));
+    drawing_object_      .setRadius(width == 0 ? min_width_ : static_cast<int>(width / 2));
+    drawing_object_frame_.setRadius(width == 0 ? min_width_ : static_cast<int>(width / 2));
+    drawing_object_empty_.setRadius(width == 0 ? min_width_ : static_cast<int>(width / 2));
 }
 
 void ToolPaint::set_width(float width)
@@ -61,9 +61,9 @@ void ToolPaint::set_width(float width)
         width_editor_->setText(std::to_string(width_));
     }
     
-    drawing_object_.setRadius(width_ / 2 == 0 ? min_width_ : width_ / 2);
-    drawing_object_frame_.setRadius(width_ / 2 == 0 ? min_width_ : width_ / 2);
-    drawing_object_empty_.setRadius(int(width / 2) == 0 ? min_width_ : int(width / 2));
+    drawing_object_.setRadius(width_ == 0 ? min_width_ : width_ / 2);
+    drawing_object_frame_.setRadius(width_ == 0 ? min_width_ : width_ / 2);
+    drawing_object_empty_.setRadius(width == 0 ? min_width_ : static_cast<int>(width / 2));
 }
 
 void ToolPaint::paint(booba::Image *image)
@@ -101,7 +101,7 @@ void ToolPaint::apply(booba::Image* image, booba::Image *hidden_layer, const boo
             {
                 clicked_ = true;
 
-                std::pair<int, int> new_point((float)event->Oleg.mpedata.x, (float)event->Oleg.mpedata.y);
+                std::pair<size_t, size_t> new_point(event->Oleg.mpedata.x, event->Oleg.mpedata.y);
 
                 points_.push_back(new_point);
                 paint(image);
@@ -117,13 +117,13 @@ void ToolPaint::apply(booba::Image* image, booba::Image *hidden_layer, const boo
             {
                 clicked_ = false;
             }
-            
+
             break;
         }
 
         case booba::Event::MouseMoved:
         {
-            std::pair<int, int> new_point((float)event->Oleg.motion.x, (float)event->Oleg.motion.y);
+            std::pair<int64_t, int64_t> new_point(static_cast<int64_t>(event->Oleg.motion.x), static_cast<int64_t>(event->Oleg.motion.y));
 
             if (clicked_)
             {
@@ -175,7 +175,7 @@ std::pair<int, int> ToolPaint::getShape()
     return {200, 200};
 }
 
-extern "C" void *init_module()
+extern "C" booba::Tool *init_module()
 {
     return new ToolPaint();
 }
